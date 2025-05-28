@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
+import Header from './components/Header';
 import { Routes, Route } from 'react-router-dom'; // <-- මෙහෙම import කරන්න
 import Home from './pages/Home'; // <-- Home component එක import කරන්න
 import Appointment from './pages/Appointment';
@@ -17,6 +18,7 @@ const App = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
          <Route path="/about" element={<About />} />

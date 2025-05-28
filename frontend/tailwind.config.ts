@@ -7,6 +7,9 @@ const config: Config = {
   ],
   theme: {
     extend: {},
+    colors: {
+        customPurple: '#5f6FFF',
+      },
 
   },
   plugins: [],
