@@ -4,72 +4,40 @@ import { assets } from '../assets/assets';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  // Fix: useState should be imported from React and used correctly
   const [showMenu, setShowMenu] = useState(false);
   const [token, setToken] = useState(true);
 
   return (
     <div className="flex items-center justify-between text-sm py-4 px-6 mb-5 border-b border-gray-400 bg-white shadow-sm">
-      {/* Logo */}
       <img
+        onClick={() => navigate('/')}
         src={assets.logo}
         alt="Prescripto logo"
-        className="h-10 w-auto"
+        className="h-10 w-auto cursor-pointer"
       />
 
-      {/* Navigation Links */}
       <ul className="hidden md:flex items-center gap-6 font-medium">
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-[#5f6FFF] border-b-2 border-[#5f6FFF] pb-1'
-                : 'text-gray-700 hover:text-[#5f6FFF]'
-            }
-          >
-            HOME
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/doctors"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-[#5f6FFF] border-b-2 border-[#5f6FFF] pb-1'
-                : 'text-gray-700 hover:text-[#5f6FFF]'
-            }
-          >
-            ALL DOCTORS
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-[#5f6FFF] border-b-2 border-[#5f6FFF] pb-1'
-                : 'text-gray-700 hover:text-[#5f6FFF]'
-            }
-          >
-            ABOUT
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/contact"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-[#5f6FFF] border-b-2 border-[#5f6FFF] pb-1'
-                : 'text-gray-700 hover:text-[#5f6FFF]'
-            }
-          >
-            CONTACT
-          </NavLink>
-        </li>
+        {[
+          { to: '/', label: 'HOME' },
+          { to: '/doctors', label: 'ALL DOCTORS' },
+          { to: '/about', label: 'ABOUT' },
+          { to: '/contact', label: 'CONTACT' },
+        ].map((item) => (
+          <li key={item.to}>
+            <NavLink
+              to={item.to}
+              className={({ isActive }) =>
+                isActive
+                  ? 'text-[#5f6FFF] border-b-2 border-[#5f6FFF] pb-1'
+                  : 'text-gray-700 hover:text-[#5f6FFF]'
+              }
+            >
+              {item.label}
+            </NavLink>
+          </li>
+        ))}
       </ul>
 
-      {/* Profile Pic or Create Account Button */}
       {token ? (
         <div className="relative flex items-center gap-2">
           <img
@@ -78,7 +46,6 @@ const Navbar = () => {
             className="h-10 w-10 rounded-full object-cover border-2 border-[#5f6FFF] cursor-pointer"
             onClick={() => navigate('/profile')}
           />
-          {/* Dropdown Icon */}
           <img
             src={assets.dropdown_icon}
             alt="Dropdown"

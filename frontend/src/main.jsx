@@ -1,13 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client'; // Import createRoot
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
+import AppContextProvider from './context/AppContext';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
+createRoot(document.getElementById('root')).render(
+  <BrowserRouter>
+    <AppContextProvider>
       <App />
-    </BrowserRouter>
-  </React.StrictMode>
+    </AppContextProvider>
+  </BrowserRouter>
 );
