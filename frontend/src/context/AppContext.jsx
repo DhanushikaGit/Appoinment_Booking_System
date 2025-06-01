@@ -1,20 +1,17 @@
 import { createContext } from 'react';
-import { doctors } from '../assets/assets';
+import { doctors } from '../assets/assets'; // Verify this path and ensure doctors is an array
 
 export const AppContext = createContext();
-const currencySymbol ="Rs"
-
 
 const AppContextProvider = ({ children }) => {
+  const currencySymbol = 'Rs';
+
   const value = {
-    doctors,currencySymbol, // Added currencySymbol to the context
+    doctors: doctors || [], // Fallback to empty array
+    currencySymbol,
   };
 
-  return (
-    <AppContext.Provider value={value}>
-      {children} {/* Fixed typo and use correct children prop */}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export default AppContextProvider;

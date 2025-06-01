@@ -1,56 +1,25 @@
 import React, { useEffect, useContext, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { AppContext } from '../context/AppContext'; // Verify this path
+import { useParams, useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 import { assets } from '../assets/assets'; // Verify this path
+import RelatedDoctors from '../components/RelatedDoctors';
 
 const Appointment = () => {
   const { docId } = useParams();
-  const context = useContext(AppContext);
-  const { doctors, currencySymbol } = context || { doctors: [], currencySymbol: '$' };
+  const navigate = useNavigate();
+  const { doctors, currencySymbol } = useContext(AppContext) || {
+    doctors: [],
+    currencySymbol: 'Rs',
+  };
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null); // Ref for the scrollable container
+  const scrollRef = useRef(null);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  useEffect(() => {
-    const fetchDoctorInfo = async () => {
-      try {
-        if (!context) {
-          setError('AppContext is not provided');
-          setLoading(false);
-          return;
-        }
-        if (!doctors || !Array.isArray(doctors)) {
-          setError('Doctors data is not available or invalid');
-          setLoading(false);
-          return;
-        }
-        if (doctors.length > 0) {
-          const foundDoc = doctors.find((doc) => doc._id === docId);
-          if (foundDoc) {
-            setDocInfo(foundDoc);
-            await getAvailableSlots();
-          } else {
-            setError('Doctor not found');
-          }
-        } else {
-          setError('No doctors available');
-        }
-        setLoading(false);
-      } catch (err) {
-        setError('Error fetching doctor info');
-        console.error('Error fetching doctor info:', err);
-        setLoading(false);
-      }
-    };
-
-    fetchDoctorInfo();
-  }, [doctors, docId, context]);
 
   const getAvailableSlots = async () => {
     try {
@@ -86,16 +55,41 @@ const Appointment = () => {
     }
   };
 
-  // Scroll functions
+  useEffect(() => {
+    const fetchDoctorInfo = async () => {
+      setLoading(true);
+      try {
+        if (!doctors || !Array.isArray(doctors)) {
+          setError('Doctors data is not available or invalid');
+          return;
+        }
+        const foundDoc = doctors.find((doc) => doc._id === docId);
+        if (foundDoc) {
+          setDocInfo(foundDoc);
+          await getAvailableSlots();
+        } else {
+          setError('Doctor not found');
+        }
+      } catch (err) {
+        setError('Error fetching doctor info');
+        console.error('Error fetching doctor info:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctorInfo();
+  }, [doctors, docId]);
+
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: -100, behavior: 'smooth' });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: 100, behavior: 'smooth' });
     }
   };
 
@@ -111,6 +105,12 @@ const Appointment = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-xl text-red-500">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="ml-4 bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -129,7 +129,7 @@ const Appointment = () => {
         {/* Doctor Image */}
         <div className="w-full sm:w-72">
           <img
-            src={docInfo.image || (assets && assets.default_doctor_image) || ''}
+            src={docInfo.image || assets?.default_doctor_image || '/default-doctor-image.jpg'}
             alt={docInfo.name || 'Doctor'}
             className="bg-blue-100 w-full rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300"
           />
@@ -140,7 +140,7 @@ const Appointment = () => {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-medium text-gray-900">{docInfo.name || 'Unknown Doctor'}</h1>
             <img
-              src={(assets && assets.verified_icon) || ''}
+              src={assets?.verified_icon || '/verified-icon.png'}
               alt="Verified"
               className="w-5 h-5"
             />
@@ -159,7 +159,7 @@ const Appointment = () => {
             <div className="flex items-center gap-1">
               <h2 className="text-sm font-medium text-gray-900">About</h2>
               <img
-                src={(assets && assets.info_icon) || ''}
+                src={assets?.info_icon || '/info-icon.png'}
                 alt="Info"
                 className="w-4 h-4"
               />
@@ -171,7 +171,7 @@ const Appointment = () => {
             <p className="text-gray-600">
               Appointment fee:
               <span className="font-medium text-gray-800 ml-2">
-                {currencySymbol || '$'}{docInfo.fees || 'N/A'}
+                {currencySymbol || 'Rs'}{docInfo.fees || 'N/A'}
               </span>
             </p>
           </div>
@@ -235,7 +235,7 @@ const Appointment = () => {
               <div
                 ref={scrollRef}
                 className="flex gap-2 overflow-x-auto scroll-smooth whitespace-nowrap"
-                style={{ maxWidth: '400px' }} // Adjust to show ~5 slots (assuming each slot is ~80px wide)
+                style={{ maxWidth: '400px' }}
               >
                 {docSlots[slotIndex].map((slot, index) => (
                   <button
@@ -277,6 +277,9 @@ const Appointment = () => {
           </div>
         )}
       </div>
+
+      {/* Related Doctors */}
+      <RelatedDoctors docId={docId} speciality={docInfo?.speciality || ''} />
     </div>
   );
 };
