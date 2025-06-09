@@ -58,7 +58,7 @@ const Navbar = () => {
                 className="block w-full text-left px-2 py-1 hover:bg-[#f0f4ff] rounded transition"
                 onClick={() => {
                   setShowMenu(false);
-                  navigate('/profile');
+                  navigate('/myprofile');
                 }}
               >
                 My Profile
@@ -67,7 +67,7 @@ const Navbar = () => {
                 className="block w-full text-left px-2 py-1 hover:bg-[#f0f4ff] rounded transition"
                 onClick={() => {
                   setShowMenu(false);
-                  navigate('/appointments');
+                  navigate('/myappointments');
                 }}
               >
                 My Appointments
